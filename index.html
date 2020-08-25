@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>天知道</title>
+    <link rel="stylesheet" href="css/reset.css" />
+    <link rel="stylesheet" href="css/iconfont.css" />
+    <link rel="stylesheet" href="css/main2.css" />
+    <script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
+    <style>
+        .tem .iconfont {
+            font-size: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="search_form">
+            <div class="logo"><img src="img/logo.png" alt="logo" /></div>
+            <div class="form_group">
+                <input type="text" class="input_txt" placeholder="请输入查询的天气" />
+                <button class="input_sub">搜 索</button>
+            </div>
+            <div class="hotkey">
+                <a href="javascript:;">北京</a><a href="javascript:;">上海</a><a href="javascript:;">广州</a><a href="javascript:;">深圳</a>
+            </div>
+        </div>
+        <ul class="weather_list"></ul>
+    </div>
+
+    <!-- 导入jQ -->
+    <script src="./js/jquery-1.12.4.min.js"></script>
+    <!-- 导入模板引擎 -->
+    <script src="./js/template-web.js"></script>
+    <script id="tianqi" type="text/html">
+        {{each data.forecast v}}
+        <li>
+            <div class="info_type">
+                <!-- 小雨 -->
+                {{ if v.type.indexOf('小雨') != -1 }}
+                <span class="iconfont">&#xe932;</span>
+                <!-- 雨 -->
+                {{ else if v.type.indexOf('雨') != -1 }}
+                <span class="iconfont">&#xe931;</span>
+                <!-- 晴 -->
+                {{ else if v.type.indexOf('晴') != -1 }}
+                <span class="iconfont">&#xe933;</span>
+                <!-- 雨夹雪 -->
+                {{ else if v.type.indexOf('雨夹雪') != -1 }}
+                <span class="iconfont">&#xe934;</span>
+                <!-- 阴 -->
+                {{ else if v.type.indexOf('阴') != -1 }}
+                <span class="iconfont">&#xe92d;</span>
+                <!-- 风 -->
+                {{ else if v.type.indexOf('风') != -1 }}
+                <span class="iconfont">&#xeb8c;</span>
+                <!-- 雪 -->
+                {{ else if v.type.indexOf('雪') != -1 }}
+                <span class="iconfont">&#xeb87;</span>
+                <!-- 多云 -->
+                {{ else if v.type.indexOf('多云') != -1 }}
+                <span class="iconfont">&#xeb79;</span>
+                <!-- 雷 -->
+                {{ else if v.type.indexOf('雷') != -1 }}
+                <span class="iconfont">&#xeb77;</span>
+                <!-- 冰雹 -->
+                {{ else if v.type.indexOf('冰雹') != -1 }}
+                <span class="iconfont">&#xeb76;</span>
+                <!-- 雾霾 -->
+                {{ else if v.type.indexOf('雾霾') != -1 }}
+                <span class="iconfont">&#xeb75;</span> {{ /if }}
+
+            </div>
+            <div class="info_temp">高<b>{{v.high.split(' ')[1]}}</b><br>低 {{v.low.split(' ')[1]}}</div>
+            <div class="info_date"><b> {{data.city}} </b><span> {{v.date}} </span></div>
+        </li>
+        {{/each}}
+    </script>
+
+    <script>
+        $('.input_txt').keyup(function(e) {
+            if (e.keyCode == 13) {
+                // let text = $(this).val();
+                // $('.input_sub').addClass('loading');
+                // $.ajax({
+                //     url: 'http://wthrcdn.etouch.cn/weather_mini',
+                //     type: 'get',
+                //     dataType: 'json',
+                //     data: {
+                //         city: text
+                //     },
+                //     success: function(backData) {
+                //         setTimeout(function() {
+                //             $('.input_sub').removeClass('loading');
+                //             console.log(backData);
+                //             $('.weather_list').html(template('tianqi', backData))
+                //         }, 1000)
+                //     }
+                // });
+                weather();
+            }
+        })
+
+        // 1.点击搜索按钮
+        // 2.获取表单的值
+        // 3.ajxa发送请求
+        // 4.ajax响应 模板渲染页面
+
+        // 点击a标签
+        // 表单文本变成当前点击的a标签
+        // 3.ajxa发送请求
+        // 4.ajax响应 模板渲染页面
+
+        // 3.页面一加载：请求第一个热门城市数据
+
+        //     4.loading加载动画
+        //   核心思路： gif动图实现
+        //   步骤：
+        //     显示： ajax发送之前
+        //     隐藏： ajax响应之后
+
+        // http://wthrcdn.etouch.cn/weather_mini  get  city
+        $('.input_sub').click(function() {
+            weather();
+        })
+        $('.hotkey>a').click(function() {
+            $('.input_txt').val($(this).text());
+            $('.input_sub').click();
+        })
+        $('.hotkey>a:eq(0)').click();
+
+        function weather() {
+            let text = $('.input_txt').val();
+            $('.input_sub').addClass('loading');
+            $.ajax({
+                url: 'http://wthrcdn.etouch.cn/weather_mini',
+                type: 'get',
+                dataType: 'json',
+                data: {
+                    city: text
+                },
+                success: function(backData) {
+                    setTimeout(function() {
+                        $('.input_sub').removeClass('loading');
+                        console.log(backData);
+                        $('.weather_list').html(template('tianqi', backData))
+                    }, 1000)
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
